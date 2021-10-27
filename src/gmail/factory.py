@@ -28,10 +28,20 @@ class MailFactory:
     def create_draft(self, msg) -> str:
         """Creates a draft from the raw message object"""
         draft = self.app.create_draft(msg)
-        return draft['id']
+        return draft
+
+    def send_draft(self, draft) -> str:
+        """Creates a draft from the raw message object"""
+        self.app.send_draft(draft)
+        return draft
 
     def delete_draft(self, msg_id):
         return self.app.delete_draft(str(msg_id))
+
+    def send_message_directly(self, msg):
+        message = self.app.send_message(msg)
+        print(f'sent message: {message["id"]}')
+        return message['id']
 
 
 # Jinja Imports
@@ -75,10 +85,9 @@ class DataHandler:
             html=html_file
         )
 
-        draft_id = factory.create_draft(msg)
-        print("created:", draft_id)
+        draft = factory.create_draft(msg)
 
-        return (f"{d['name']} {d['surname']}", draft_id)
+        return (f"{d['name']} {d['surname']}", draft)
 
 
 def main():
@@ -86,16 +95,24 @@ def main():
     app = Gmail()
     fac = MailFactory(app)
 
-    drafts = list()
-    for d in DataHandler.process_csv_data('./src/data/shortlist-groups.csv'):
-        drafts.append(DataHandler.run(fac, d))
+    file = './src/data/shortlist-groups.csv'
+    # file = './src/data/test-data.csv'
+    csv_data = DataHandler.process_csv_data(file)
 
-    pprint(drafts)
+    msgs = list()
+    for d in csv_data:
+        draft = DataHandler.run(fac, d)
+        msgs.append(draft)
 
     if input('\ndelete all drafts? y/n: ') == 'y':
-        for k, v in drafts:
-            fac.delete_draft(v)
-            pprint(f"deleted: {v}")
+        for k, v in msgs:
+            fac.delete_draft(v['id'])
+            pprint(f"deleted: {k} > {v['id']}")
+    else:
+        if input('\nsend all drafts? y/n: ') == 'y':
+            for k, v in msgs:
+                pprint(f"sent: {k} > {v['id']}")
+                fac.send_draft(v)
 
 
 if __name__ == '__main__':
