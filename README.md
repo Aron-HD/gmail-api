@@ -1,0 +1,3 @@
+# Automate MAIL
+
+extendable app

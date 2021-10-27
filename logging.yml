@@ -1,0 +1,34 @@
+version: 1
+formatters:
+  simple:
+    format: '%(levelname)s - %(name)s:%(lineno)s:%(funcName)s() - %(message)s'
+  detailed:
+    format: '%(asctime)s - %(levelname)s - %(name)s:%(lineno)s:%(funcName)s() - %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO # only warning and error in console
+    formatter: simple
+    stream: ext://sys.stdout
+  file:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG # all messages make it to file
+    formatter: detailed
+    filename: logs/debug.log
+    maxBytes: 10485760 # 10MB
+    backupCount: 7
+    encoding: utf8
+root:
+  level: DEBUG
+  handlers: [console, file]
+# loggers:
+#   pkg.cli:
+#     level: DEBUG
+#     handlers: [console, file]
+#     formatter: detailed
+#     propagate: no
+#   pkg.subpkg.submodule:
+#     level: DEBUG
+#     handlers: [console, file]
+#     formatter: simple
+#     propagate: no

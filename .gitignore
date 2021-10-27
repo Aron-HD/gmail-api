@@ -1,0 +1,22 @@
+# python
+__pycache__/
+
+# logs
+logs/
+*.log
+
+# sublime
+*.sublime*
+
+# GDPR data
+*.csv
+
+# dev
+gsheets/
+
+# Credentials
+token.json
+credentials.json
+
+# Notes
+NOTES.md

@@ -1,0 +1,6 @@
+Hi there,
+
+This is a test plain text email sent through the Gmail API.
+
+Thanks,
+Aron
