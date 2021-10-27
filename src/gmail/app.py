@@ -41,20 +41,28 @@ class Gmail(App):
         try:
             self.service.users().drafts().delete(
                 userId=self.user_id, id=draft_id).execute()
-            return f"deleted {draft_id}"
+            return draft_id
         except Exception as e:
             log.error(e)
+            return None
+
+    def send_draft(self, draft):
+        try:
+            self.service.users().drafts().send(
+                userId=self.user_id, body=draft).execute()
+            return draft['id']
+        except Exception as e:
+            raise e
             return None
 
     def get_drafts(self):
         return self.service.users().drafts().list(
             userId=self.user_id).execute()
 
-    def send_message(self, message):
+    def send_message(self, message_body):
         try:
             message = self.service.users().messages().send(
-                userId=self.user_id, body=message).execute()
-            log.info('Message Id: %s' % message['id'])
+                userId=self.user_id, body=message_body).execute()
             return message
         except Exception as e:
             log.error(e)
